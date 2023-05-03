@@ -1,0 +1,39 @@
+﻿31 Для классов кораблей, калибр орудий которых не менее 16 дюймов, укажите класс и страну.
+ select class,country from classes where bore >=16
+
+32 Задание: 32 (Serge I: 2003-02-17)
+   Одной из характеристик корабля является половина куба калибра его главных орудий (mw). С точностью до 2 десятичных знаков определите среднее значение mw для кораблей каждой страны, у которой есть корабли в базе данных.
+   
+   select country, cast(avg(power(bore,3)/2) as numeric(6,2))
+   from (
+   select class,name from  ships
+    union
+   select ship,ship from outcomes 
+   )as q join classes c on c.class = q.class
+   group by country 
+   
+ 33 Укажите корабли, потопленные в сражениях в Северной Атлантике (North Atlantic). Вывод: ship.
+ 
+  select ship
+  from Outcomes
+  where battle  = 'North Atlantic' 
+  and result ='sunk'     
+  
+ 34 По Вашингтонскому международному договору от начала 1922 г. запрещалось строить линейные корабли водоизмещением более 35 тыс.тонн. Укажите корабли, нарушившие этот договор (учитывать только корабли c известным годом спуска на воду). Вывести названия кораблей.
+ 
+  select name from ships s
+   join classes c on c.class =s.class
+   where type = 'bb'
+   and launched >=1922
+   and displacement> 35000
+ 
+ 35 В таблице Product найти модели, которые состоят только из цифр или только из латинских букв (A-Z, без учета регистра).
+    Вывод: номер модели, тип модели. 
+    
+    select model,
+           type
+    from product 
+    where model not like '%[^A-Z]%'
+    or model not like '%[^0-9]%'
+
+    
