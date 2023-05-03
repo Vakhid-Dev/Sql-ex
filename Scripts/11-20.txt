@@ -1,0 +1,76 @@
+﻿11 Найдите среднюю скорость ПК.
+
+SELECT Avg(speed)
+FROM   pc 
+
+12 Найдите среднюю скорость ПК-блокнотов, цена которых превышает 1000 дол.
+
+select avg(speed)
+from laptop 
+where price >1000
+
+13 Найдите среднюю скорость ПК, выпущенных производителем A.
+
+select avg(speed)
+from pc
+join product p on p.model = pc.model
+where maker = 'A'
+
+14 Найдите класс, имя и страну для кораблей из таблицы Ships, имеющих не менее 10 орудий
+
+select c.class,name,country from classes c 
+ join ships s on s.class = c.class
+ where numGuns >=10
+
+15 Найдите размеры жестких дисков, совпадающих у двух и более PC. Вывести: HD
+
+select hd from pc
+group by hd
+having count(*)>=2
+
+16 Найдите пары моделей PC, имеющих одинаковые скорость и RAM. В результате каждая пара указывается только один раз, т.е. (i,j), но не (j,i), Порядок вывода: модель с большим номером, модель с меньшим номером, скорость и RAM.
+
+select distinct
+       big.model,
+       lil.model,
+       big.speed,
+       big.ram
+from pc big,pc lil
+where big.model > lil.model
+and big.speed  = lil.speed
+and big.ram = lil.ram
+
+17 Найдите модели ПК-блокнотов, скорость которых меньше скорости каждого из ПК.
+   Вывести: type, model, speed
+
+select distinct
+       type,
+       l.model,
+       speed 
+from laptop l
+join product p on p.model = l.model
+where speed <all (select speed from pc )   
+   
+18 Найдите производителей самых дешевых цветных принтеров. Вывести: maker, price
+
+with q as (
+ select  model,price from printer
+ where color = 'y'
+)select distinct maker,price from q
+  join product p on q.model = p.model
+   where q.price =(select min(q.price) from q)
+
+19 Для каждого производителя, имеющего модели в таблице Laptop, найдите средний размер экрана выпускаемых им ПК-блокнотов.
+   Вывести: maker, средний размер экрана.
+   
+select maker,avg(screen) from product p
+join laptop l on l.model = p.model
+group by maker
+   
+20 Найдите производителей, выпускающих по меньшей мере три различных модели ПК. Вывести: Maker, число моделей ПК.   
+
+select maker,count(model)
+from product
+where type ='pc'
+group by maker
+having count(*)>=3        
