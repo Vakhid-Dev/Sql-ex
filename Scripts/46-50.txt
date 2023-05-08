@@ -1,0 +1,51 @@
+﻿46 Для каждого корабля, участвовавшего в сражении при Гвадалканале (Guadalcanal), вывести название, водоизмещение и число орудий.
+
+   select distinct ship,displacement,numGuns from classes c
+   left join ships s on s.class = c.class
+   right join outcomes o on o.ship = c.class or o.ship = s.name
+   where battle ='Guadalcanal'
+   
+47 Определить страны, которые потеряли в сражениях все свои корабли.
+
+   with sh as (
+   select class,name from ships 
+    union
+   select ship as class,ship from outcomes 
+   ),cnts as (
+   select country ,count(name) as total from classes c
+    left join sh on c.class = sh.class
+    group by country
+   ),cnts_sunk as (
+    select country ,count(name) as total from classes c 
+    left join sh  on c.class = sh.class
+    left join outcomes o on o.ship = c.class or o.ship = sh.name
+    where result ='sunk'
+    group by country
+   )select cnts.country from cnts join cnts_sunk 
+    on cnts.total = cnts_sunk.total
+    where cnts.country = cnts_sunk .country
+
+48 Найдите классы кораблей, в которых хотя бы один корабль был потоплен в сражении.
+
+   select distinct c.class from classes c
+   left join ships s on s.class = c.class
+   left join outcomes o on o.ship = c.class  or s.name = o.ship
+   where ship  in (
+    select ship from outcomes 
+    where result ='sunk'
+   )
+
+49 Найдите названия кораблей с орудиями калибра 16 дюймов (учесть корабли из таблицы Outcomes).
+
+   with sh as (
+    select class,name from ships 
+    union
+    select ship as class,ship from outcomes
+   )select name from sh  join classes c on c.class = sh.class
+    where bore = 16
+
+50 Найдите сражения, в которых участвовали корабли класса Kongo из таблицы Ships.
+
+   select distinct battle from outcomes o 
+    join ships s on s.name = o.ship
+    where class = 'Kongo'
