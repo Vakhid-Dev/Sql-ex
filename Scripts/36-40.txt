@@ -34,6 +34,15 @@ where result ='damaged'
  and b.date < b1.date 
 )
 
+with q as (
+select ship ,date ,result from outcomes o
+join battles b  on b.name = o.battle
+),sq as (
+select ship,date as d_date from q where result = 'damaged'
+) select distinct  q.ship from q ,sq
+  where sq.d_date < q.date 
+   and  q.ship = sq.ship
+
 40  Найти производителей, которые выпускают более одной модели, при этом все выпускаемые производителем модели являются продуктами одного типа.
     Вывести: maker, type
    
@@ -41,5 +50,11 @@ where result ='damaged'
     group by maker
     having count(model)>1
     and max(type)= min(type)
+
+SELECT maker, MIN(type) AS type
+FROM Product
+GROUP BY maker
+HAVING COUNT(model) > 1
+   AND COUNT(DISTINCT type) = 1
     
  
