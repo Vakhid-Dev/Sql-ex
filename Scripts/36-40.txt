@@ -1,10 +1,10 @@
 ﻿36  Перечислите названия головных кораблей, имеющихся в базе данных (учесть корабли в Outcomes).
 
-select name from (
-select class,name from ships 
+select  name from (
+select name from ships 
  union
-select ship,ship from outcomes 
-)as q join classes c on c.class =q.name
+select  ship from outcomes 
+)as q join classes c on c.class = q.name
 
 37 Найдите классы, в которые входит только один корабль из базы данных (учесть также корабли в Outcomes).
 
