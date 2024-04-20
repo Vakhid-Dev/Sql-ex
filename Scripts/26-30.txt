@@ -30,13 +30,22 @@ left join Outcome_o o on i.point = o.point and i.date = o.date
 select o.point,o.date ,inc,out from Outcome_o o  
 left join Income_o i on i.point = o.point and i.date = o.date
 
+SELECT 
+    COALESCE(i.point, o.point) AS point,
+    COALESCE(i.date,o.date)  AS date,
+    inc AS inc,
+    out AS out
+FROM 
+    income_o i
+FULL  JOIN 
+    outcome_o o ON i.point = o.point AND i.date = o.date
+
 30 В предположении, что приход и расход денег на каждом пункте приема фиксируется произвольное число раз (первичным ключом в таблицах является столбец code), требуется получить таблицу, в которой каждому пункту за каждую дату выполнения операций будет соответствовать одна строка.
    Вывод: point, date, суммарный расход пункта за день (out), суммарный приход пункта за день (inc). Отсутствующие значения считать неопределенными (NULL).
    
-   select point,date,sum(out_), sum(inc_) from (
-     select i.point,i.date,null as out_,inc as inc_ from Income i
-     left join Outcome o on o.code = i.code
-      union all
-     select o.point,o.date,out as out_,null as inc_ from Outcome o 
-     left join Income i on o.code = i.code
-    )as q group by point,date  
+select point,date,sum(out_),sum(inc_) from (
+ select point,date,inc as inc_,null as out_ from income 
+  union all 
+ select point,date,null ,out from outcome 
+
+) as q group by point,date
