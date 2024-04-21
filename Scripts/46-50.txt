@@ -31,6 +31,20 @@ sht as (
 select x.country from sht x join shs y on x.country=y.country
 where x.total=y.total
 
+WITH All_ships AS (
+    SELECT c.country, s.name
+    FROM ships s JOIN classes c ON s.class=c.class
+    UNION
+    SELECT c.country, o.ship 
+    FROM outcomes o JOIN classes c ON c.class=o.ship
+ )
+SELECT DISTINCT country FROM All_ships
+WHERE country NOT IN (
+ SELECT country FROM All_ships
+ WHERE All_ships.name NOT IN ( SELECT ship name FROM outcomes WHERE 
+  result = 'sunk')
+)
+
 
 48 Найдите классы кораблей, в которых хотя бы один корабль был потоплен в сражении.
 
