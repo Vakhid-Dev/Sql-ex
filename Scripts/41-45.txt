@@ -14,6 +14,23 @@
    then max(price) end as max_price
    from product p join q on q.model = p.model
    group by maker
+
+ WITH q AS (
+    SELECT model, price FROM pc 
+    UNION
+    SELECT model, price FROM printer
+    UNION
+    SELECT model, price FROM laptop
+ )
+ SELECT maker,
+       CASE 
+           WHEN COUNT(*) != COUNT(price) THEN NULL
+           ELSE MAX(price)
+       END AS max_price
+ FROM q join product p on p.model = q.model 
+ GROUP BY maker
+
+
    
 42 Найдите названия кораблей, потопленных в сражениях, и название сражения, в котором они были потоплены.
  
