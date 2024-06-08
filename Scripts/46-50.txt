@@ -31,6 +31,26 @@ sht as (
 select x.country from sht x join shs y on x.country=y.country
 where x.total=y.total
 
+with q as (
+ select class,name from ships 
+  union
+ select ship,ship from outcomes
+),a as (
+ select country,count(name) as count_all from q
+  join classes c on c.class = q.class or q.name = c.class
+ group by country
+),b as (
+ select country,count(ship) as count_after from outcomes o
+ join q  on o.ship = q.name
+ join classes c on c.class = q.class
+ where result ='sunk'
+ group by country
+) select  a.country 
+  from a join b on a.country = b.country 
+  and count_all = count_after
+
+
+
 WITH All_ships AS (
     SELECT c.country, s.name
     FROM ships s JOIN classes c ON s.class=c.class
