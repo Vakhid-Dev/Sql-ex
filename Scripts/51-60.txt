@@ -1,0 +1,6 @@
+51 
+Найдите названия кораблей, имеющих наибольшее число орудий среди всех имеющихся кораблей такого же водоизмещения (учесть корабли из таблицы Outcomes).
+
+WITH q AS ( SELECT class, name FROM ships UNION SELECT ship AS class, ship AS name FROM outcomes )
+SELECT  name FROM q JOIN classes c ON q.class = c.class WHERE numguns =( SELECT max(c1.numguns)
+FROM classes c1 WHERE c1.displacement = c.displacement and c1.class in (select class from q) )
