@@ -65,6 +65,16 @@ WHERE country NOT IN (
   result = 'sunk')
 )
 
+WITH q AS (
+    SELECT COALESCE(c.class, s.class) AS class, ship
+    FROM outcomes o
+    LEFT JOIN ships s ON s.name = o.ship
+    LEFT JOIN classes c ON c.class = o.ship
+    WHERE result = 'sunk' AND (c.class IS NOT NULL OR s.class IS NOT NULL)
+)
+SELECT DISTINCT class FROM q
+
+
 
 48 Найдите классы кораблей, в которых хотя бы один корабль был потоплен в сражении.
 
