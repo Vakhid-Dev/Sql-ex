@@ -7,7 +7,7 @@
    
 47 Определить страны, которые потеряли в сражениях все свои корабли.
 
- with sh as (
+1. with sh as (
   select c.country, s.name from classes c join ships s on c.class=s.class
   union
   select c.country, o.ship from outcomes o join classes c on c.class=o.ship
@@ -31,7 +31,7 @@ sht as (
 select x.country from sht x join shs y on x.country=y.country
 where x.total=y.total
 
-with q as (
+2. with q as (
  select class,name from ships 
   union
  select ship,ship from outcomes
@@ -51,7 +51,7 @@ with q as (
 
 
 
-WITH All_ships AS (
+3. WITH All_ships AS (
     SELECT c.country, s.name
     FROM ships s JOIN classes c ON s.class=c.class
     UNION
@@ -65,7 +65,7 @@ WHERE country NOT IN (
   result = 'sunk')
 )
 
-WITH q AS (
+4. WITH q AS (
     SELECT COALESCE(c.class, s.class) AS class, ship
     FROM outcomes o
     LEFT JOIN ships s ON s.name = o.ship
@@ -73,6 +73,23 @@ WITH q AS (
     WHERE result = 'sunk' AND (c.class IS NOT NULL OR s.class IS NOT NULL)
 )
 SELECT DISTINCT class FROM q
+5. with sh as (
+ select country,name,c.class from ships s
+  join classes c on c.class = s.class
+  union 
+ select country,ship,class from outcomes o 
+  join classes c on c.class = o.ship
+),sh_all as (
+  select country,count(name) as count_all from sh 
+  group by country
+),sh_sunked as (
+  select country,count(name) as count_sunked from sh
+  join outcomes o on o.ship = sh.name
+  and result = 'sunk'
+  group by country
+)select a.country from sh_all a
+ join sh_sunked b on a.country = b.country
+ where a.count_all = b.count_sunked
 
 
 
