@@ -1,0 +1,21 @@
+WITH q
+     AS (SELECT NAME,
+                class
+         FROM   ships
+         UNION
+         SELECT ship,
+                ship
+         FROM   outcomes),
+     stats
+     AS (SELECT battle,
+                country
+         FROM   q
+                JOIN classes c
+                  ON c.class = q.class
+                JOIN outcomes o
+                  ON o.ship = q.NAME)
+SELECT DISTINCT battle
+FROM   stats
+GROUP  BY battle,
+          country
+HAVING Count(country) >= 3
