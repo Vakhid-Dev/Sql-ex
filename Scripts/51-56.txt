@@ -84,6 +84,11 @@ select c.class,min(launched) from ships s
 right join classes c on c.class = s.class
 group by c.class
 
+select c.class ,min(launched) from classes c
+left join ships s on c.class = s.class
+group by c.class
+
+
 56 
 
 Для каждого класса определите число кораблей этого класса, потопленных в сражениях. Вывести: класс и число потопленных кораблей.
