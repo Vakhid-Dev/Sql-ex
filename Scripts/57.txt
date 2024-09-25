@@ -15,6 +15,13 @@ with q as (
   where result = 'sunk'
 )as sq group by class
 
+SELECT class, COUNT(ship) count_sunked
+FROM (SELECT name, class FROM ships
+      UNION
+      SELECT ship, ship FROM outcomes) t
+LEFT JOIN outcomes ON name = ship AND result = 'sunk'
+GROUP BY class
+HAVING COUNT(ship) > 0 AND COUNT(*) > 2
 
 SELECT c.class, SUM(sh.sunked)
 FROM classes c
