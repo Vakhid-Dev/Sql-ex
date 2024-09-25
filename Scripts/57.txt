@@ -1,0 +1,40 @@
+with q as (
+ select name,c.class from ships s
+  join classes c on c.class = s.class
+ union
+ select ship,class from outcomes o 
+  join classes c on c.class = o.ship 
+),stats as (
+ select class,count(*) as count_ship from q
+ group by class
+ having count(*)>=3
+)select class,count(*) from (
+  select s.class from stats s
+  join q on q.class = s.class
+  join outcomes o on o.ship = q.name or o.ship = q.class
+  where result = 'sunk'
+)as sq group by class
+
+
+select
+  class
+  , SUM(CASE WHEN result='sunk' THEN 1 ELSE 0 END) as sunks
+  from (
+    select c.class, name from classes c
+      join ships s on c.class=s.class
+    union
+    select class, ship from classes 
+      join outcomes on class=ship
+  ) as sh
+  left join outcomes o on sh.name=o.ship
+  group by class
+  having
+    SUM(CASE WHEN result='sunk' THEN 1 ELSE 0 END) > 0
+    and (select count(si.name) from (
+            select s.name, s.class from ships s
+            union
+            select o.ship, o.ship from outcomes o
+          ) as si
+        where si.class = sh.class
+        group by si.class
+        )>=3
